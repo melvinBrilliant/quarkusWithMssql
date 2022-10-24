@@ -53,9 +53,17 @@ public class TerritoryServiceImpl implements TerritoryService {
 
     @Override
     @Transactional
-    public RestResponse<Object> saveOne(@Valid UpsertTerritoryDto dto) {
+    public RestResponse<Object> saveOne(@Valid UpsertTerritoryDto dto,
+                                        String httpMethod) {
         Optional<Region> regionOptional = Region.findByIdOptional(dto.getRegionId());
-        Region region = regionOptional.orElseThrow(NotFoundException::new);
+        if (httpMethod.equals("PUT")) {
+            Territory.findByIdOptional(dto.getId())
+                    .orElseThrow(() -> new NotFoundException("territory not found")
+            );
+        }
+        Region region = regionOptional.orElseThrow(() ->
+                new NotFoundException("region not found")
+        );
         Territory territory = Territory.builder()
                 .id(dto.getId())
                 .territoryDescription(dto.getTerritoryDescription())
@@ -70,7 +78,6 @@ public class TerritoryServiceImpl implements TerritoryService {
                 null,
                 200, "SUCCESS"
         );
-
     }
 
     @Override

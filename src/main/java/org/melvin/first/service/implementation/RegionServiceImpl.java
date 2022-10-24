@@ -6,10 +6,15 @@ import org.melvin.first.dto.RestResponse;
 import org.melvin.first.dto.region.RegionDto;
 import org.melvin.first.dto.region.UpsertRegionDto;
 import org.melvin.first.entity.Region;
+import org.melvin.first.entity.Territory;
 import org.melvin.first.service.abstraction.RegionService;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.ws.rs.NotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class RegionServiceImpl implements RegionService {
@@ -38,7 +43,7 @@ public class RegionServiceImpl implements RegionService {
     }
 
     @Override
-    public RestResponse<RegionDto> findById(Long id) {
+    public RestResponse<RegionDto> findById(Integer id) {
         RegionDto data = RegionDto.toRegionDto(Region.findById(id));
         return new RestResponse<>(
                 data,
@@ -52,13 +57,47 @@ public class RegionServiceImpl implements RegionService {
     }
 
     @Override
-    public RestResponse<Object> saveOne(UpsertRegionDto dto) {
-        return null;
+    @Transactional
+    public RestResponse<Object> saveOne(@Valid UpsertRegionDto dto) {
+        Region region = new Region();
+        if (dto.getId() == 0) {
+            region.setRegionDescription(dto.getRegionDescription());
+        } else {
+            Optional<Region> optRegion = Region.findByIdOptional(dto.getId());
+            region = optRegion.orElseThrow(() -> new NotFoundException("region not found"));
+            region.setRegionDescription(dto.getRegionDescription());
+        }
+        region.persist();
+        return new RestResponse<>(
+                null,
+                null,
+                null,
+                null,
+                null,
+                202, "SUCCESS"
+        );
     }
 
     @Override
-    public RestResponse<Object> deleteOne(Long id) {
-        return null;
+    @Transactional
+    public RestResponse<Object> deleteOne(Integer id) {
+        Region.findByIdOptional(id).orElseThrow(
+                () -> new NotFoundException("region not found")
+        );
+        Long totalDependentTerriotry = Territory.countTerritoryByRegion(id);
+        if (totalDependentTerriotry != 0) {
+            throw new IllegalArgumentException(
+                    "can not delete region with dependent territory");
+        }
+        Region.deleteById(id);
+        return new RestResponse<>(
+                null,
+                null,
+                null,
+                null,
+                null,
+                202, "SUCCESS"
+        );
     }
 
 }

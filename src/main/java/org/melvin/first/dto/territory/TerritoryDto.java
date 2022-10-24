@@ -17,13 +17,13 @@ public class TerritoryDto {
     private final String territoryDescription;
 
     @JsonProperty("region_id")
-    private final Long regionId;
+    private final Integer regionId;
 
     public static TerritoryDto toTerritoryDto(Territory territory) {
         return new TerritoryDto(
                 territory.getId(),
                 territory.getTerritoryDescription(),
-                territory.getRegionID().id
+                territory.getRegionID().getId()
         );
     }
 

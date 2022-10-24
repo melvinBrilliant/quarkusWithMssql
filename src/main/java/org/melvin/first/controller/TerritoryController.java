@@ -1,11 +1,10 @@
 package org.melvin.first.controller;
 
 import org.apache.http.HttpStatus;
-import org.jboss.resteasy.reactive.RestPath;
 import org.jboss.resteasy.reactive.RestQuery;
 import org.melvin.first.dto.RestResponse;
 import org.melvin.first.dto.territory.UpsertTerritoryDto;
-import org.melvin.first.service.implementation.TerritoryServiceImpl;
+import org.melvin.first.service.abstraction.TerritoryService;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
@@ -17,7 +16,7 @@ import javax.ws.rs.core.Response;
 public class TerritoryController {
 
     @Inject
-    private TerritoryServiceImpl service;
+    private TerritoryService service;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -33,14 +32,12 @@ public class TerritoryController {
         return Response.status(200).entity(service.findById(id)).build();
     }
 
-    @PUT
-    @Path("/upsert")
+    @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response insertTerritory(UpsertTerritoryDto dto) {
         try {
-            return Response.accepted(service.saveOne(dto)).build();
+            return Response.accepted(service.saveOne(dto, "POST")).build();
         } catch (ConstraintViolationException e) {
-            var error = e.getConstraintViolations();
             return Response
                     .status(HttpStatus.SC_UNPROCESSABLE_ENTITY)
                     .entity(new RestResponse<>(
@@ -53,12 +50,59 @@ public class TerritoryController {
                             e.getConstraintViolations().toString()
                     ))
                     .build();
+        } catch (NotFoundException e) {
+            return Response
+                    .status(HttpStatus.SC_NOT_FOUND)
+                    .entity(new RestResponse<>(
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            404,
+                            e.getMessage()
+                    ))
+                    .build();
+        }
+    }
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateTerritory(UpsertTerritoryDto dto) {
+        try {
+            return Response.accepted(service.saveOne(dto, "PUT")).build();
+        } catch (ConstraintViolationException e) {
+            return Response
+                    .status(HttpStatus.SC_UNPROCESSABLE_ENTITY)
+                    .entity(new RestResponse<>(
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            HttpStatus.SC_UNPROCESSABLE_ENTITY,
+                            e.getConstraintViolations().toString()
+                    ))
+                    .build();
+        } catch (NotFoundException e) {
+            return Response
+                    .status(HttpStatus.SC_NOT_FOUND)
+                    .entity(new RestResponse<>(
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            404,
+                            e.getMessage()
+                    ))
+                    .build();
         }
     }
 
     @DELETE
     @Path("/delete/{id}")
-    public Response insertTerritory(@RestPath String id) {
+    public Response deleteTerritory(String id) {
         try {
             return Response.accepted(service.deleteOne(id)).build();
         } catch (NotFoundException e) {

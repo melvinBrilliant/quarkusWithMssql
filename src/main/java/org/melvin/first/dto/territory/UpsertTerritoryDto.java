@@ -23,6 +23,6 @@ public class UpsertTerritoryDto {
 
     @JsonProperty("region_id")
     @NotNull(message = "hoho")
-    private Long regionId;
+    private Integer regionId;
 
 }

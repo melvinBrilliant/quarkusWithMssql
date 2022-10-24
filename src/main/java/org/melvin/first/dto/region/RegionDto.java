@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
 public class RegionDto {
 
     @JsonProperty("id")
-    private final Long id;
+    private final Integer id;
 
     @JsonProperty("region_description")
     private final String regionDescription;
 
     public static RegionDto toRegionDto(Region region) {
         return new RegionDto(
-                region.id,
+                region.getId(),
                 region.getRegionDescription()
         );
     }

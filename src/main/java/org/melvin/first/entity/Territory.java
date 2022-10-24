@@ -23,4 +23,8 @@ public class Territory extends PanacheEntityBase {
     @JoinColumn(name = "RegionID", nullable = false)
     private Region regionID;
 
+    public static Long countTerritoryByRegion(Integer id) {
+        return Territory.count("RegionID", id);
+    }
+
 }
