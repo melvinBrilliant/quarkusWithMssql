@@ -10,17 +10,18 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
+@Table(name = "territory")
 public class Territory extends PanacheEntityBase {
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     private String id;
 
-    @Column(name = "TerritoryDescription")
+    @Column(name = "territory_description")
     private String territoryDescription;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "RegionID", nullable = false)
+    @JoinColumn(name = "region_id", nullable = false)
     private Region regionID;
 
     public static Long countTerritoryByRegion(Integer id) {

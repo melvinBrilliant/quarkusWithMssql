@@ -12,14 +12,15 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter @Setter
 @Entity
+@Table(name = "region")
 public class Region extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "id")
     private Integer id;
 
-    @Column(name = "RegionDescription")
+    @Column(name = "region_description")
     private String regionDescription;
 
     @OneToMany(mappedBy = "regionID")
