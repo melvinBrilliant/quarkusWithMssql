@@ -2,8 +2,10 @@ package org.melvin.first.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import lombok.*;
+import org.melvin.first.dto.territory.TerritoryDto;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Builder
@@ -26,6 +28,13 @@ public class Territory extends PanacheEntityBase {
 
     public static Long countTerritoryByRegion(Integer id) {
         return Territory.count("RegionID", id);
+    }
+
+    public static List<TerritoryDto> findAllWithDto() {
+        String selectField = "SELECT T.id, T.territoryDescription, R.id ";
+        String from = "FROM Territory as T ";
+        String join = "JOIN T.regionID as R";
+        return Territory.find(selectField + from + join).project(TerritoryDto.class).list();
     }
 
 }

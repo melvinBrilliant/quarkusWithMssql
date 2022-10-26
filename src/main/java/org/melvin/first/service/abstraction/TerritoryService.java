@@ -12,4 +12,5 @@ public interface TerritoryService {
     RestResponse<TerritoryDto> findById(String id);
     RestResponse<Object> saveOne(@Valid UpsertTerritoryDto dto, String httpMethod);
     RestResponse<Object> deleteOne(String id);
+    List<TerritoryDto> findAllWithDto();
 }

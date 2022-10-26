@@ -121,4 +121,10 @@ public class TerritoryController {
         }
     }
 
+    @GET
+    @Path("/with-dto")
+    public Response withDto() {
+        return Response.ok(service.findAllWithDto()).build();
+    }
+
 }

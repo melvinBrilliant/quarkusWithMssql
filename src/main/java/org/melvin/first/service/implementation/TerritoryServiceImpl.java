@@ -96,4 +96,9 @@ public class TerritoryServiceImpl implements TerritoryService {
         );
     }
 
+    @Override
+    public List<TerritoryDto> findAllWithDto() {
+        return Territory.findAllWithDto();
+    }
+
 }
